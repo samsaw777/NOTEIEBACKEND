@@ -1,10 +1,8 @@
 const express = require("express");
-const app = express();
+const app = express.Router();
 const Feed = require("../Model/model");
 
-
-
-
+//initial get route
 app.get("/", (req, res) => {
   res.status(200).send({
     name: "sameep",
@@ -12,9 +10,8 @@ app.get("/", (req, res) => {
   });
 });
 
-
-
-app.post("/notes", async (req, res) => {
+//Post the notes
+app.post("/savenotes", async (req, res) => {
   const message = req.body;
   await Feed.create(message, (err, data) => {
     if (err) {
@@ -25,6 +22,15 @@ app.post("/notes", async (req, res) => {
   });
 });
 
-
+//get the notes
+app.get("/getnotes", async (req, res) => {
+  await Feed.find((err, data) => {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      res.status(200).send(data);
+    }
+  });
+});
 
 module.exports = app;
