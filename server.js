@@ -10,7 +10,7 @@ require("dotenv").config();
 const MongodbUrl = `mongodb+srv://samsaw:${process.env.DATABASE_PASS}@cluster0.dousy.mongodb.net/${process.env.DATABASE_NAME}?retryWrites=true&w=majority`;
 //This is middleware
 
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 // app.use(bodyparser.json());
 app.use("/", feedroute);
