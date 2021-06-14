@@ -12,7 +12,7 @@ const MongodbUrl = `mongodb+srv://samsaw:${process.env.DATABASE_PASS}@cluster0.d
 
 app.use(cors());
 app.use(express.json());
-// app.use(bodyparser.json());
+app.use(bodyparser.json());
 app.use("/", feedroute);
 
 //Connecting to the database
