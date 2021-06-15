@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express.Router();
 const Feed = require("../Model/model");
-
+const auth = require("../Middleware/auth");
 //initial get route
 app.get("/", (req, res) => {
   res.status(200).send({
@@ -11,7 +11,7 @@ app.get("/", (req, res) => {
 });
 
 //Post the notes
-app.post("/savenotes", async (req, res) => {
+app.post("/savenotes", auth, async (req, res) => {
   const message = req.body;
   await Feed.create(message, (err, data) => {
     if (err) {
@@ -23,7 +23,7 @@ app.post("/savenotes", async (req, res) => {
 });
 
 //get the notes
-app.get("/getnotes", async (req, res) => {
+app.get("/getnotes", auth, async (req, res) => {
   await Feed.find((err, data) => {
     if (err) {
       res.status(500).send(err.message);
