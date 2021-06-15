@@ -12,14 +12,18 @@ app.get("/", (req, res) => {
 
 //Post the notes
 app.post("/savenotes", auth, async (req, res) => {
-  const message = req.body;
-  await Feed.create(message, (err, data) => {
-    if (err) {
-      res.status(500).send(err.message);
-    } else {
-      res.status(201).send(`New Message create: \n ${data}`);
-    }
+  const { text } = req.body;
+  const newnote = new Feed({
+    text: text,
   });
+  await newnote
+    .save()
+    .then((user) => {
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      res.status(500).send({ msg: err.message });
+    });
 });
 
 //get the notes
