@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express.Router();
 
-const mockusers = require("../Model/mock");
+const mockusersapi = require("../Model/mock");
 
 app.post("/savemock", async (req, res) => {
   const { answerText, questionEmbedId, user, created } = req.body;
-  const mockuser = new mockusers({
+  const mockuser = new mockusersapi({
     answerText: answerText,
     questionEmbedId: questionEmbedId,
     user: user,
@@ -23,7 +23,7 @@ app.post("/savemock", async (req, res) => {
 
 //get the notes
 app.get("/getmock", async (req, res) => {
-  await mockusers.find((err, data) => {
+  await mockusersapi.find((err, data) => {
     if (err) {
       res.status(500).send(err.message);
     } else {
