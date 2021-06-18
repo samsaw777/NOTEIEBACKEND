@@ -13,6 +13,7 @@ app.use(express.json());
 app.use("/", require("./Routes/routes"));
 app.use("/", require("./Routes/users"));
 app.use("/", require("./Routes/auth"));
+app.use("/", require("./Routes/mockapi"));
 
 //Connecting to the database
 const connectmongo = async () => {
