@@ -7,18 +7,19 @@ const jwt = require("jsonwebtoken");
 const auth = require("../Middleware/auth");
 
 //post the message to valid the user
-
-router.post("/auth", (req, res) => {
+//this is to signin the user into the system
+router.post("/signin", (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) return res.json({ msg: "please enter the fields " });
+  if (!email || !password)
+    return res.status(400).send({ msg: "please enter the fields " });
 
   User.findOne({ email }).then((user) => {
-    if (!user) return res.json({ msg: "User does not exits!" });
+    if (!user) return res.status(400).send({ msg: "User does not exits!" });
 
     //Validating the password
     bcrypt.compare(password, user.password).then((boolean) => {
-      if (!boolean) return res.json({ msg: "Incorrect password!" });
+      if (!boolean) return res.status(400).send({ msg: "Incorrect password!" });
 
       jwt.sign(
         { id: user.id },
@@ -45,7 +46,8 @@ router.post("/auth", (req, res) => {
 router.get("/loguser", auth, (req, res) => {
   User.findById(req.user.id)
     .select("-password")
-    .then((user) => res.json(user));
+    .then((user) => res.json(user))
+    .catch((err) => res.json(err));
 });
 
 module.exports = router;

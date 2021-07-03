@@ -5,15 +5,28 @@ const User = require("../Model/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+//this is a sign up route created
 //post the user and check the user
-router.post("/sign", (req, res) => {
+router.post("/signup", (req, res) => {
   //request the data from the client
   const { name, email, password } = req.body;
 
   //Check of anything is empty
-  if (!name || !email || !password) {
+  if (!name && !email && !password) {
     return res.status(400).send({
       msg: "Enter all the fileds!",
+    });
+  } else if (!name) {
+    return res.status(400).send({
+      msg: "No name",
+    });
+  } else if (!email) {
+    return res.status(400).send({
+      msg: "No email",
+    });
+  } else if (!password) {
+    return res.status(400).send({
+      msg: "No password",
     });
   }
 
@@ -76,4 +89,5 @@ router.post("/sign", (req, res) => {
   });
 });
 
+//
 module.exports = router;
