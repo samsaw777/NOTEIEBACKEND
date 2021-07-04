@@ -12,9 +12,11 @@ app.get("/", (req, res) => {
 
 //Post the notes
 app.post("/savenotes", auth, async (req, res) => {
-  const { text } = req.body;
+  const { text, color, weight } = req.body;
   const newnote = new Feed({
     text: text,
+    color: color,
+    weight: weight,
   });
   await newnote
     .save()

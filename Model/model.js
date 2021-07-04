@@ -5,6 +5,14 @@ const noteit = mongoose.Schema({
     type: "string",
     required: true,
   },
+  color: {
+    type: "string",
+    required: true,
+  },
+  weight: {
+    type: "number",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("noteitdatabase", noteit);
