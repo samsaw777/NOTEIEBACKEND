@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const { ObjectId } = mongoose.Schema.Types;
 const noteit = mongoose.Schema({
   text: {
     type: "string",
@@ -12,6 +12,10 @@ const noteit = mongoose.Schema({
   weight: {
     type: "number",
     required: true,
+  },
+  postedBy: {
+    type: ObjectId,
+    ref: "user",
   },
 });
 

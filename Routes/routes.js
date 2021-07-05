@@ -17,6 +17,7 @@ app.post("/savenotes", auth, async (req, res) => {
     text: text,
     color: color,
     weight: weight,
+    postedBy: req.user,
   });
   await newnote
     .save()
@@ -24,19 +25,20 @@ app.post("/savenotes", auth, async (req, res) => {
       res.status(200).send(user);
     })
     .catch((err) => {
-      res.status(500).send({ msg: err.message });
+      res.status(500).send({ msg: err });
     });
 });
 
 //get the notes
 app.get("/getnotes", auth, async (req, res) => {
-  await Feed.find((err, data) => {
-    if (err) {
-      res.status(500).send(err.message);
-    } else {
-      res.status(200).send(data);
-    }
-  });
+  await Feed.find({ postedBy: req.user._id })
+    .populate("postedBy", "_id")
+    .then((response) => {
+      res.status(200).send(response);
+    })
+    .catch((err) => {
+      res.status(500).send({ msg: err.message });
+    });
 });
 
 module.exports = app;

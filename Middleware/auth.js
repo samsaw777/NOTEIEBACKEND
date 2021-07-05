@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const User = require("../Model/users");
 const auth = (req, res, next) => {
   const token = req.header("x-auth-token");
 
@@ -10,8 +10,10 @@ const auth = (req, res, next) => {
   //Allow the user
   try {
     const decode = jwt.verify(token, process.env.JWT_TOKEN);
-    req.user = decode;
-    next();
+    User.findById(decode.id).then((user) => {
+      req.user = user;
+      next();
+    });
   } catch (err) {
     res.status(400).json({ msg: "Token is not valid!" });
   }
