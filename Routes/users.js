@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 
 //this is a sign up route created
 //post the user and check the user
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   //request the data from the client
   const { name, email, password } = req.body;
 
@@ -31,7 +31,7 @@ router.post("/signup", (req, res) => {
   }
 
   //Check if there is a user by same email registered
-  User.findOne({ email }).then((user) => {
+  await User.findOne({ email }).then((user) => {
     if (user)
       return res.status(200).send({
         msg: "User email already registered",

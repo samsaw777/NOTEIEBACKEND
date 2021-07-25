@@ -8,13 +8,13 @@ const auth = require("../Middleware/auth");
 
 //post the message to valid the user
 //this is to signin the user into the system
-router.post("/signin", (req, res) => {
+router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password)
     return res.status(400).send({ msg: "please enter the fields " });
 
-  User.findOne({ email }).then((user) => {
+  await User.findOne({ email }).then((user) => {
     if (!user) return res.status(400).send({ msg: "User does not exits!" });
 
     //Validating the password
