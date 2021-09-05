@@ -14,7 +14,7 @@ app.use("/", require("./Routes/routes"));
 app.use("/", require("./Routes/users"));
 app.use("/", require("./Routes/auth"));
 app.use("/", require("./Routes/mockapi"));
-
+app.use("/", require("./Routes/google"));
 //Connecting to the database
 const connectmongo = async () => {
   await mongoose.connect(
