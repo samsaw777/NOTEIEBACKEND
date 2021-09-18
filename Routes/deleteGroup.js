@@ -4,8 +4,8 @@ require("dotenv").config();
 const Feed = require("../Model/model");
 
 //delete the group from the group database
-router.delete("/deletegroup", (req, res) => {
-  const { id } = req.body;
+router.delete("/deletegroup/:id", (req, res) => {
+  const { id } = req.params;
   Feed.findByIdAndDelete(id, (error, response) => {
     if (error) {
       res.status(400).send("Error while deleting the records!");
