@@ -15,14 +15,15 @@ const transporter = nodeMailer.createTransport(
 );
 
 //creating route to send the link to the user email
-router.post("/reset", async (req, res) => {
+router.post("/resetp", async (req, res) => {
   const { email } = req.body;
+
   if (email === "") {
-    return res.status(401).json({ message: "Email cannot be empty" });
+    return res.json({ message: "Email cannot be empty" });
   }
-  await User.findOne({ email }).then((user) => {
+  await User.findOne({ email: email }).then((user) => {
     if (!user) {
-      return res.status(403).json({ message: "No user with this email found" });
+      return res.json({ message: "No user with this email found" });
     }
     const token = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = token;
@@ -32,7 +33,7 @@ router.post("/reset", async (req, res) => {
         to: user.email,
         from: "sameepsawant10@gmail.com",
         subject: "Reset Password",
-        html: `<p>This mail is send to change ${user.name} password.</p> <h4>Click this <a href="https://localhost:300/resetpassword/${token}">Link</a> to change this password.</h4>`,
+        html: `<p>This mail is send to change ${user.name} password.</p> <h4>Click this <a href="http://localhost:3000/reset/${token}">Link</a> to change this password.</h4>`,
       });
       res.json({ msg: "Check you message" });
     });
