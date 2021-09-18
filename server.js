@@ -16,6 +16,8 @@ app.use("/", require("./Routes/auth"));
 app.use("/", require("./Routes/mockapi"));
 app.use("/", require("./Routes/google"));
 app.use("/", require("./Routes/deleteGroup"));
+app.use("/", require("./Routes/Forgotpassword"));
+app.use("/", require("./Routes/Resetpassword"));
 //Connecting to the database
 const connectmongo = async () => {
   await mongoose.connect(
