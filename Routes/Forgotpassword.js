@@ -33,7 +33,7 @@ router.post("/resetp", async (req, res) => {
         to: user.email,
         from: "sameepsawant10@gmail.com",
         subject: "Reset Password",
-        html: `<p>This mail is send to change ${user.name} password.</p> <h4>Click this <a href="http://localhost:3000/reset/${token}">Link</a> to change this password.</h4>`,
+        html: `<p>This mail is send to change ${user.name} password.</p> <h4>Click this <a href="https://remoteworktracker.netlify.app//reset/${token}">Link</a> to change this password.</h4>`,
       });
       res.json({ msg: "Check you message" });
     });
