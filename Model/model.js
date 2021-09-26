@@ -13,6 +13,7 @@ const noteit = mongoose.Schema({
     type: "number",
     required: true,
   },
+  members: [{ type: ObjectId, ref: "user" }],
   postedBy: {
     type: ObjectId,
     ref: "user",

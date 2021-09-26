@@ -33,7 +33,7 @@ router.post("/signup", async (req, res) => {
   //Check if there is a user by same email registered
   await User.findOne({ email }).then((user) => {
     if (user)
-      return res.status(200).send({
+      return res.status(400).send({
         msg: "User email already registered",
       });
 

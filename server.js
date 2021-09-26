@@ -18,6 +18,9 @@ app.use("/", require("./Routes/google"));
 app.use("/", require("./Routes/deleteGroup"));
 app.use("/", require("./Routes/Forgotpassword"));
 app.use("/", require("./Routes/Resetpassword"));
+app.use("/", require("./Routes/addMemebr"));
+app.use("/", require("./Routes/addFriend"));
+app.use("/", require("./Routes/allUsers"));
 //Connecting to the database
 const connectmongo = async () => {
   await mongoose.connect(

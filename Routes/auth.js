@@ -10,7 +10,6 @@ const auth = require("../Middleware/auth");
 //this is to signin the user into the system
 router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password)
     return res.status(400).send({ msg: "please enter the fields " });
 
