@@ -74,12 +74,12 @@ router.post("/addfriend", (req, res) => {
 
 //remove frined
 router.post("/removefriend", (req, res) => {
-  const { userId, friendId } = req.body;
+  const { userId, friendEmail } = req.body;
 
   User.findByIdAndUpdate(
     userId,
     {
-      $pull: { friends: friendId },
+      $pull: { friends: friendEmail },
     },
     { new: true }
   ).exec((err, result) => {
