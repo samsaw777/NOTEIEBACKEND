@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const User = require("../Model/users");
+const Group = require("../Model/model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 

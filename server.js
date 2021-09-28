@@ -21,6 +21,9 @@ app.use("/", require("./Routes/Resetpassword"));
 app.use("/", require("./Routes/addMemebr"));
 app.use("/", require("./Routes/addFriend"));
 app.use("/", require("./Routes/allUsers"));
+app.use("/", require("./Routes/addMember"));
+app.use("/", require("./Routes/addMessage"));
+app.use("/", require("./Routes/getUser"));
 //Connecting to the database
 const connectmongo = async () => {
   await mongoose.connect(

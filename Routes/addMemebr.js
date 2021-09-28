@@ -5,13 +5,13 @@ const auth = require("../Middleware/auth");
 
 // Add user to the group
 app.post("/adduser", (req, res) => {
-  const { Id, groupId } = req.body;
+  const { email, groupId } = req.body;
   //   if (Id === req.user._id) {
   //     return res.status(400).send("Cannot add yourself!");
   //   } else {
   Group.findByIdAndUpdate(
     groupId,
-    { $push: { members: Id } },
+    { $push: { members: email } },
     { new: true }
   ).exec((err, result) => {
     if (err) {
@@ -24,13 +24,13 @@ app.post("/adduser", (req, res) => {
 
 //remove user form the group
 app.post("/removeuser", (req, res) => {
-  const { Id, groupId } = req.body;
+  const { email, groupId } = req.body;
   //   if (Id === req.user._id) {
   //     return res.status(400).send("Cannot add yourself!");
   //   } else {
   Group.findByIdAndUpdate(
     groupId,
-    { $pull: { members: Id } },
+    { $pull: { members: email } },
     { new: true }
   ).exec((err, result) => {
     if (err) {

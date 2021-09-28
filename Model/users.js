@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { String } = mongoose.Schema.Types;
+const { String, ObjectId } = mongoose.Schema.Types;
 const UserSchema = new Schema({
   name: {
     type: "string",
@@ -21,6 +21,12 @@ const UserSchema = new Schema({
   tokenExpries: Date,
   friends: [{ type: String, ref: "user" }],
   followRequest: [{ type: String, ref: "user" }],
+  joinedGroup: [
+    {
+      Id: { type: ObjectId, ref: "noteitdatabase" },
+      Name: { type: String, ref: "noteitdatabase" },
+    },
+  ],
 });
 
 module.exports = mongoose.model("user", UserSchema);

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema.Types;
+const { String, ObjectId } = mongoose.Schema.Types;
 const noteit = mongoose.Schema({
   text: {
     type: "string",
@@ -13,7 +13,7 @@ const noteit = mongoose.Schema({
     type: "number",
     required: true,
   },
-  members: [{ type: ObjectId, ref: "user" }],
+  members: [{ type: String, ref: "user" }],
   postedBy: {
     type: ObjectId,
     ref: "user",
