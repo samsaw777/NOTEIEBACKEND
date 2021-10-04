@@ -4,11 +4,12 @@ const Message = require("../Model/message");
 
 //send the message
 app.post("/sendmessage", async (req, res) => {
-  const { text, groupId, userId } = req.body;
+  const { text, groupId, userId, userName } = req.body;
   const newMessage = new Message({
     text: text,
     postedBy: userId,
     groupOn: groupId,
+    postedByName: userName,
   });
   await newMessage
     .save()
@@ -21,10 +22,11 @@ app.post("/sendmessage", async (req, res) => {
 });
 
 //get messages
-app.get("/getmessage", async (req, res) => {
-  const { groupId } = req.body;
-  await Message.find({ groupOn: groupId })
-    .populate("postedBy", "_id email name")
+app.get("/getmessage/:id", async (req, res) => {
+  const { id } = req.params;
+  // s
+  await Message.find({ groupOn: id })
+
     .then((response) => {
       res.status(200).send(response);
     })
