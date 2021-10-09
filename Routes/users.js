@@ -61,7 +61,7 @@ router.post("/signup", async (req, res) => {
                   },
                   process.env.JWT_TOKEN,
                   {
-                    expiresIn: 3600,
+                    expiresIn: 86400,
                   },
                   (err, token) => {
                     if (err) {

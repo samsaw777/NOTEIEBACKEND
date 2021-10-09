@@ -23,7 +23,7 @@ router.post("/signin", async (req, res) => {
       jwt.sign(
         { id: user.id },
         process.env.JWT_TOKEN,
-        { expiresIn: 3600 },
+        { expiresIn: 86400 },
         (err, token) => {
           if (err) return res.json({ msg: err.message });
           res.json({
