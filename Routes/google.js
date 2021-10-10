@@ -12,7 +12,6 @@ const client = new OAuth2Client(
 
 router.post("/googlelogin", async (req, res) => {
   const { tokenId } = req.body;
-
   await client
     .verifyIdToken({
       idToken: tokenId,
@@ -36,6 +35,7 @@ router.post("/googlelogin", async (req, res) => {
                     id: user.id,
                     name: user.name,
                     email: user.email,
+                    image: user.image,
                   },
                 });
               }
@@ -46,6 +46,7 @@ router.post("/googlelogin", async (req, res) => {
               name,
               email,
               password,
+              image: picture,
             });
             bcrypt.genSalt(10, (err, salt) => {
               if (err) {
@@ -76,6 +77,7 @@ router.post("/googlelogin", async (req, res) => {
                                 id: user.id,
                                 name: user.name,
                                 email: user.email,
+                                image: user.image,
                               },
                             });
                           }

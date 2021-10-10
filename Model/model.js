@@ -13,6 +13,9 @@ const noteit = mongoose.Schema({
     type: "number",
     required: true,
   },
+  image: {
+    type: "string",
+  },
   members: [{ type: String, ref: "user" }],
   postedBy: {
     type: ObjectId,

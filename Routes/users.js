@@ -11,7 +11,8 @@ const jwt = require("jsonwebtoken");
 router.post("/signup", async (req, res) => {
   //request the data from the client
   const { name, email, password } = req.body;
-
+  const randomValue = Math.floor(Math.random() * 5000);
+  let url = `https://avatars.dicebear.com/api/micah/${randomValue}.svg`;
   //Check of anything is empty
   if (!name && !email && !password) {
     return res.status(400).send({
@@ -42,6 +43,7 @@ router.post("/signup", async (req, res) => {
       name,
       email,
       password,
+      image: url,
     });
 
     bcrypt.genSalt(10, (err, salt) => {
@@ -73,6 +75,7 @@ router.post("/signup", async (req, res) => {
                         id: user.id,
                         name: user.name,
                         email: user.email,
+                        image: user.image,
                       },
                     });
                   }

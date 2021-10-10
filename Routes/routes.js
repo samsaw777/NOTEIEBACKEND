@@ -13,11 +13,14 @@ app.get("/", (req, res) => {
 //Post the notes
 app.post("/savenotes", auth, async (req, res) => {
   const { text, color, weight } = req.body;
+  const randomValue = Math.floor(Math.random() * 5000);
+  let url = `https://avatars.dicebear.com/api/gridy/${randomValue}.svg`;
   const newnote = new Feed({
     text: text,
     color: color,
     weight: weight,
     postedBy: req.user,
+    image: url,
   });
   await newnote
     .save()

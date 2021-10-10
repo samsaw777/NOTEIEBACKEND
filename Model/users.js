@@ -18,6 +18,9 @@ const UserSchema = new Schema({
   resetPasswordToken: {
     type: "string",
   },
+  image: {
+    type: "string",
+  },
   tokenExpries: Date,
   friends: [{ type: String, ref: "user" }],
   followRequest: [{ type: String, ref: "user" }],
