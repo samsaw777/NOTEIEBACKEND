@@ -4,7 +4,7 @@ const Group = require("../Model/model");
 const User = require("../Model/users");
 //add member to the group
 app.post("/addmember", async (req, res) => {
-  const { memberEmail, groupId, groupName } = req.body;
+  const { memberEmail, groupId, groupName, groupImage } = req.body;
   const group = await Group.findByIdAndUpdate(
     groupId,
     {
@@ -16,7 +16,9 @@ app.post("/addmember", async (req, res) => {
   const user = await User.findOneAndUpdate(
     { email: memberEmail },
     {
-      $push: { joinedGroup: [{ Id: groupId, Name: groupName }] },
+      $push: {
+        joinedGroup: [{ Id: groupId, Name: groupName, image: groupImage }],
+      },
     },
     { new: true }
   ).exec();

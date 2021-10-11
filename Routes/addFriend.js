@@ -55,7 +55,7 @@ router.post("/cancelrequest", (req, res) => {
 //Add friend using backend
 router.post("/addfriend", (req, res) => {
   const { userId, friendEmail } = req.body;
-
+  console.log(userId);
   User.findByIdAndUpdate(
     userId,
     {

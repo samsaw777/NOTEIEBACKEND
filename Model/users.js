@@ -28,6 +28,7 @@ const UserSchema = new Schema({
     {
       Id: { type: ObjectId, ref: "noteitdatabase" },
       Name: { type: String, ref: "noteitdatabase" },
+      image: { type: String, ref: "noteitdatabase" },
     },
   ],
 });
