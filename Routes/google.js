@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 const User = require("../Model/users");
+const db = require("../firebase");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
@@ -21,79 +22,93 @@ router.post("/googlelogin", async (req, res) => {
     .then((response) => {
       const { email_verified, email, name, picture } = response.payload;
       if (email_verified) {
-        User.findOne({ email }).then((user) => {
-          if (user) {
-            jwt.sign(
-              { id: user.id },
-              process.env.JWT_TOKEN,
-              { expiresIn: 3600 },
-              (err, token) => {
-                if (err) return res.json({ msg: err.message });
-                res.json({
-                  token: token,
-                  user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    image: user.image,
-                  },
-                });
-              }
-            );
-          } else {
-            const password = email + name;
-            const userdata = new User({
-              name,
-              email,
-              password,
-              image: picture,
-            });
-            bcrypt.genSalt(10, (err, salt) => {
-              if (err) {
-                res.send({ msg: err.message });
-              } else {
-                bcrypt.hash(userdata.password, salt, (err, hash) => {
-                  if (err) {
-                    res.send({ msg: err.message });
-                  } else {
-                    userdata.password = hash;
-                    try {
-                      userdata.save().then((user) => {
-                        jwt.sign(
-                          {
-                            id: user.id,
-                          },
-                          process.env.JWT_TOKEN,
-                          {
-                            expiresIn: 3600,
-                          },
-                          (err, token) => {
-                            if (err) {
-                              res.json({ msg: err.message });
-                            }
-                            res.send({
-                              token: token,
-                              user: {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                                image: user.image,
-                              },
-                            });
-                          }
-                        );
-                      });
-                    } catch (err) {
-                      res.json({
-                        msg: err.message,
-                      });
-                    }
+        db.collection("users")
+          .where("email", "==", email)
+          .get()
+          .then((users) => {
+            if (users.docs.length) {
+              users.docs.map((user) => {
+                const User = user.data();
+                jwt.sign(
+                  { id: user.id },
+                  process.env.JWT_TOKEN,
+                  { expiresIn: 86400 },
+                  (err, token) => {
+                    if (err) return res.json({ msg: err.message });
+                    res.json({
+                      token: token,
+                      user: {
+                        id: user.id,
+                        name: User.name,
+                        email: User.email,
+                        image: User.image,
+                      },
+                    });
                   }
-                });
-              }
-            });
-          }
-        });
+                );
+              });
+            } else {
+              const password = email + name;
+
+              bcrypt.genSalt(10, (err, salt) => {
+                if (err) {
+                  res.send({ msg: err.message });
+                } else {
+                  bcrypt.hash(password, salt, (err, hash) => {
+                    if (err) {
+                      res.send({ msg: err.message });
+                    } else {
+                      const hashedPassword = hash;
+                      try {
+                        db.collection("users")
+                          .add({
+                            email: email,
+                            name: name,
+                            image: picture,
+                            password: hashedPassword,
+                          })
+                          .then((user) => {
+                            db.collection("users")
+                              .doc(`${user.id}`)
+                              .get()
+                              .then((nuser) => {
+                                const newuser = nuser.data();
+                                jwt.sign(
+                                  {
+                                    id: user.id,
+                                  },
+                                  process.env.JWT_TOKEN,
+                                  {
+                                    expiresIn: 86400,
+                                  },
+                                  (err, token) => {
+                                    if (err) {
+                                      res.json({ msg: err.message });
+                                    }
+                                    res.send({
+                                      token: token,
+                                      user: {
+                                        id: user.id,
+                                        name: newuser.name,
+                                        email: newuser.email,
+                                        image: newuser.image,
+                                      },
+                                    });
+                                  }
+                                );
+                              });
+                          });
+                      } catch (err) {
+                        res.json({
+                          msg: err.message,
+                        });
+                      }
+                    }
+                  });
+                }
+              });
+            }
+          });
       }
     });
 });
