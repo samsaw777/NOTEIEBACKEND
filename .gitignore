@@ -1,3 +1,5 @@
 node_modules
 
-remoteworktracker.json
+.remoteworktracker.json
+
+.env
