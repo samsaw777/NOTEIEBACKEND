@@ -60,6 +60,7 @@ router.get("/loguser", auth, (req, res) => {
     .get()
     .then((user) => {
       const User = user.data();
+      User.id = user.id;
       res.send(User);
     })
     .catch((err) => res.send(err));

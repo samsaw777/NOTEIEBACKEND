@@ -1,15 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../Model/users");
-
+const db = require("../firebase");
 //get all the user from the database
 router.get("/allusers", (req, res) => {
-  User.find({})
+  const allUsers = [];
+  db.collection("users")
+    .get()
     .then((users) => {
-      return res.status(200).json(users);
-    })
-    .catch((error) => {
-      return res.status(400).json(error);
+      users.docs.map((user) => {
+        const userinfo = user.data();
+        delete userinfo.password;
+        userinfo.id = user.id;
+        allUsers.push(userinfo);
+      });
+      res.send(allUsers);
     });
 });
 
