@@ -2,6 +2,7 @@ const express = require("express");
 const app = express.Router();
 const Feed = require("../Model/model");
 const auth = require("../Middleware/auth");
+const db = require("../firebase");
 //initial get route
 app.get("/", (req, res) => {
   res.status(200).send({
@@ -12,35 +13,52 @@ app.get("/", (req, res) => {
 
 //Post the notes
 app.post("/savenotes", auth, async (req, res) => {
-  const { text, color, weight } = req.body;
+  // console.log(req);
+  const { text } = req.body;
   const randomValue = Math.floor(Math.random() * 5000);
   let url = `https://avatars.dicebear.com/api/gridy/${randomValue}.svg`;
-  const newnote = new Feed({
-    text: text,
-    color: color,
-    weight: weight,
-    postedBy: req.user,
-    image: url,
-  });
-  await newnote
-    .save()
-    .then((user) => {
-      res.status(200).send(user);
+
+  db.collection("groups")
+    .add({
+      groupName: text,
+      postedBy: req.user.email,
+      postedById: req.user.id,
+      image: url,
+    })
+    .then((response) => {
+      db.collection("groups")
+        .doc(`${response.id}`)
+        .get()
+        .then((group) => {
+          const groupInfo = group.data();
+          groupInfo.id = response.id;
+          res.send(groupInfo);
+        });
     })
     .catch((err) => {
-      res.status(500).send({ msg: err });
+      console.log(err);
     });
 });
 
 //get the notes
 app.get("/getnotes", auth, async (req, res) => {
-  await Feed.find({ postedBy: req.user._id })
-    .populate("postedBy", "_id")
+  // const { email } = req.body;
+  await db
+    .collection("groups")
+    .where("postedBy", "==", req.user.email)
+    .get()
     .then((response) => {
-      res.status(200).send(response);
+      const getNotes = [];
+
+      response.docs.map((singleresponse) => {
+        const note = singleresponse.data();
+        note.id = singleresponse.id;
+        getNotes.push(note);
+      });
+      res.send(getNotes);
     })
     .catch((err) => {
-      res.status(500).send({ msg: err.message });
+      res.send(err);
     });
 });
 
