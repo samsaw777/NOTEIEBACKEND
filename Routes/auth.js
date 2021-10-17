@@ -53,7 +53,6 @@ router.post("/signin", async (req, res) => {
 
 router.get("/loguser", auth, (req, res) => {
   // console.log(req);
-  const { user } = req;
 
   db.collection("users")
     .doc(`${req.user.id}`)
@@ -64,6 +63,25 @@ router.get("/loguser", auth, (req, res) => {
       res.send(User);
     })
     .catch((err) => res.send(err));
+});
+
+router.get("/logusergroups", auth, async (req, res) => {
+  // const { user } = req.body;
+  console.log(req.user.id);
+  const allGroups = [];
+  await db
+    .collection("users")
+    .doc(`${req.user.id}`)
+    .collection("groupsjoined")
+    .get()
+    .then((groups) => {
+      groups.docs.map((group) => {
+        const groupsDetail = group.data();
+        groupsDetail.id = group.id;
+        allGroups.push(groupsDetail);
+      });
+      res.send(allGroups);
+    });
 });
 
 module.exports = router;

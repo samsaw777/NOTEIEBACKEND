@@ -62,4 +62,22 @@ app.get("/getnotes", auth, async (req, res) => {
     });
 });
 
+app.get("/getgroupmembers/:id", async (req, res) => {
+  const { id } = req.params;
+  const allMembers = [];
+  await db
+    .collection("groups")
+    .doc(`${id}`)
+    .collection("members")
+    .get()
+    .then((members) => {
+      members.docs.map((member) => {
+        const memberinfo = member.data();
+        memberinfo.id = member.id;
+        allMembers.push(memberinfo);
+      });
+      res.send(allMembers);
+    });
+});
+
 module.exports = app;

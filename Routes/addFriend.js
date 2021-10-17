@@ -7,7 +7,7 @@ router.post("/sendrequest", (req, res) => {
   const { userEmail, friendId, image, loginId } = req.body;
   db.collection("users")
     .doc(`${friendId}`)
-    .collection("frendRequest")
+    .collection("friendRequest")
     .add({
       userEmail,
       image,
@@ -28,7 +28,7 @@ router.get("/showrequest/:userId", async (req, res) => {
   await db
     .collection("users")
     .doc(`${userId}`)
-    .collection("frendRequest")
+    .collection("friendRequest")
     .get()
     .then((requests) => {
       requests.docs.map((request) => {
@@ -37,65 +37,93 @@ router.get("/showrequest/:userId", async (req, res) => {
         allRequests.push(requestInfo);
       });
       res.send(allRequests);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
+});
+
+//Show friends list
+router.get("/showfriends/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const allFriends = [];
+  await db
+    .collection("users")
+    .doc(`${userId}`)
+    .collection("friends")
+    .get()
+    .then((friends) => {
+      friends.docs.map((friend) => {
+        const friendInfo = friend.data();
+        friendInfo.id = friend.id;
+        allFriends.push(friendInfo);
+      });
+      res.send(allFriends);
+    })
+    .catch((err) => {
+      res.send(err);
     });
 });
 
 //Reject friend request
-router.post("/cancelrequest", (req, res) => {
-  const { userEmail, friendId } = req.body;
-
-  User.findByIdAndUpdate(
-    friendId,
-    {
-      $pull: { followRequest: userEmail },
-    },
-    { new: true }
-  ).exec((err, result) => {
-    if (err) {
-      res.status(422).json("Something went wrong!");
-    } else {
-      res.status(200).json(result);
-    }
-  });
+router.post("/cancelrequest", async (req, res) => {
+  const { userId, friendId } = req.body;
+  await db
+    .collection("users")
+    .doc(`${userId}`)
+    .collection("friendRequest")
+    .doc(`${friendId}`)
+    .delete()
+    .then((response) => {
+      res.send(response);
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 //Add friend using backend
-router.post("/addfriend", (req, res) => {
-  const { userId, friendEmail } = req.body;
-  console.log(userId);
-  User.findByIdAndUpdate(
-    userId,
-    {
-      $push: { friends: friendEmail },
-      $pull: { followRequest: friendEmail },
-    },
-    { new: true }
-  ).exec((err, result) => {
-    if (err) {
-      res.status(422).json("Something went wrong!");
-    } else {
-      res.status(200).json(result);
-    }
+router.post("/addfriend", async (req, res) => {
+  const { userId, friendEmail, friendId, friendImage } = req.body;
+
+  const removeFriendRequest = await db
+    .collection("users")
+    .doc(`${userId}`)
+    .collection("friendRequest")
+    .doc(`${friendId}`)
+    .delete();
+
+  const addFriend = await db
+    .collection("users")
+    .doc(`${userId}`)
+    .collection("friends")
+    .add({
+      friendId,
+      friendImage,
+      friendEmail,
+    });
+
+  Promise.all([removeFriendRequest, addFriend]).then((value) => {
+    console.log(value);
+    res.send(`Friend added`);
   });
 });
 
 //remove frined
 router.post("/removefriend", (req, res) => {
-  const { userId, friendEmail } = req.body;
+  const { userId, friendId } = req.body;
 
-  User.findByIdAndUpdate(
-    userId,
-    {
-      $pull: { friends: friendEmail },
-    },
-    { new: true }
-  ).exec((err, result) => {
-    if (err) {
-      res.status(422).json("Something went wrong!");
-    } else {
-      res.status(200).json(result);
-    }
-  });
+  db.collection("users")
+    .doc(`${userId}`)
+    .collection("friends")
+    .doc(`${friendId}`)
+    .delete()
+    .then(() => {
+      res.send("Friend removed");
+    })
+    .catch((err) => {
+      res.send(err);
+    });
 });
 
 module.exports = router;
