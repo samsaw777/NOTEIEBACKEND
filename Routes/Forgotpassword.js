@@ -4,6 +4,7 @@ const User = require("../Model/users");
 const crypto = require("crypto");
 require("dotenv").config();
 const nodeMailer = require("nodemailer");
+const db = require("../firebase");
 // const sendGridTransporter = require("nodemailer-sendgrid-transport");
 
 const transporter = nodeMailer.createTransport({
@@ -18,31 +19,56 @@ router.post("/resetp", async (req, res) => {
   if (email === "") {
     return res.json({ message: "Email cannot be empty" });
   }
-  await User.findOne({ email: email }).then((user) => {
-    if (!user) {
-      return res.json({ message: "No user with this email found" });
-    }
-    const token = crypto.randomBytes(20).toString("hex");
-    user.resetPasswordToken = token;
-    user.tokenExpries = Date.now() + 3600000;
-    user.save().then((response) => {
-      transporter.sendMail(
-        {
-          to: user.email,
-          from: "sameepsawant10@gmail.com",
-          subject: "Reset Password",
-          html: `<p>This mail is send to change ${user.name} password.</p> <h4>Click this <a href="https://remoteworktracker.netlify.app/reset/${token}">Link</a> to change this password.</h4>`,
-        },
-        (err, response) => {
-          if (err) {
-            res.json(err);
-          } else {
-            res.json({ msg: "Check you message" });
-          }
-        }
-      );
+  await db
+    .collection("users")
+    .where("email", "==", email)
+    .get()
+    .then((users) => {
+      // res.send(`${users.docs.length}`);
+      if (users.docs.length == 0) {
+        res.status(400).send("No user with this email found");
+      }
+      users.docs.map((user) => {
+        const User = user.data();
+        // console.log(User.email);
+
+        const token = crypto.randomBytes(20).toString("hex");
+        User.resetPasswordToken = token;
+        User.id = user.id;
+        User.tokenExpries = Date.now() + 3600000;
+        db.collection("users")
+          .doc(`${User.id}`)
+          .update({
+            email: User.email,
+            image: User.image,
+            name: User.name,
+            password: User.password,
+            resetPasswordToken: User.resetPasswordToken,
+            tokenExpries: User.tokenExpries,
+          })
+          .then((response) => {
+            transporter.sendMail(
+              {
+                to: User.email,
+                from: "remotefirstworktracker@gmail.com",
+                subject: "Reset Password",
+                html: `<p>This mail is send to change ${User.name} password.</p> <h4>Click this <a href="https://remoteworktracker.netlify.app/reset/${token}">Link</a> to change this password.</h4>`,
+              },
+              (err, response) => {
+                if (err) {
+                  res.send(err);
+                } else {
+                  res.send({ msg: "Check you message" });
+                }
+              }
+            );
+          })
+          .catch((err) => {
+            res.send(err);
+          });
+      });
+      // }
     });
-  });
 });
 
 module.exports = router;
