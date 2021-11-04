@@ -29,6 +29,7 @@ app.use("/", require("./Routes/addMember"));
 app.use("/", require("./Routes/addMessage"));
 app.use("/", require("./Routes/getUser"));
 app.use("/", require("./Routes/message"));
+app.use("/", require("./Routes/todo"));
 
 //Connecting to the database
 const connectmongo = async () => {
