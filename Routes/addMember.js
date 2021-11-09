@@ -8,6 +8,7 @@ const db = require("../firebase");
 app.post("/addmember", async (req, res) => {
   const { memberEmail, groupId, groupName, groupImage, memberImage, memberId } =
     req.body;
+  console.log(memberId, groupId);
   const addToGroup = await db
     .collection("groups")
     .doc(`${groupId}`)
@@ -47,5 +48,32 @@ app.post("/addmember", async (req, res) => {
 //       res.json(err);
 //     });
 // });
+
+app.post("/removemember", async (req, res) => {
+  const { userId, groupId, userdocId } = req.body;
+
+  const removeFromGroup = await db
+    .collection("groups")
+    .doc(`${groupId}`)
+    .collection("members")
+    .doc(`${userdocId}`)
+    .delete();
+
+  const removeFromUser = await db
+    .collection("users")
+    .doc(`${userId}`)
+    .collection("groupsjoined")
+    .where("groupId", "==", groupId)
+    .get()
+    .then((snapshot) => {
+      snapshot.forEach((doc) => {
+        doc.ref.delete();
+      });
+    });
+
+  Promise.all([removeFromGroup, removeFromUser]).then((value) => {
+    res.send("Member removed from the group!");
+  });
+});
 
 module.exports = app;

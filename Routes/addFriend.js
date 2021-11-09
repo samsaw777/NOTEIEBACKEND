@@ -84,13 +84,13 @@ router.post("/cancelrequest", async (req, res) => {
 
 //Add friend using backend
 router.post("/addfriend", async (req, res) => {
-  const { userId, friendEmail, friendId, friendImage } = req.body;
+  const { userId, friendEmail, friendId, friendImage, removeId } = req.body;
 
   const removeFriendRequest = await db
     .collection("users")
     .doc(`${userId}`)
     .collection("friendRequest")
-    .doc(`${friendId}`)
+    .doc(`${removeId}`)
     .delete();
 
   const addFriend = await db
