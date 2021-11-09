@@ -29,18 +29,25 @@ router.get("/showrequest/:userId", async (req, res) => {
     .collection("users")
     .doc(`${userId}`)
     .collection("friendRequest")
-    .get()
-    .then((requests) => {
+    .onSnapshot((requests) => {
       requests.docs.map((request) => {
         const requestInfo = request.data();
         requestInfo.id = request.id;
         allRequests.push(requestInfo);
       });
       res.send(allRequests);
-    })
-    .catch((err) => {
-      res.send(err);
     });
+  // .then((requests) => {
+  //   requests.docs.map((request) => {
+  //     const requestInfo = request.data();
+  //     requestInfo.id = request.id;
+  //     allRequests.push(requestInfo);
+  //   });
+  //   res.send(allRequests);
+  // })
+  // .catch((err) => {
+  //   res.send(err);
+  // });
 });
 
 //Show friends list
@@ -51,18 +58,25 @@ router.get("/showfriends/:userId", async (req, res) => {
     .collection("users")
     .doc(`${userId}`)
     .collection("friends")
-    .get()
-    .then((friends) => {
+    .onSnapshot((friends) => {
       friends.docs.map((friend) => {
         const friendInfo = friend.data();
         friendInfo.id = friend.id;
         allFriends.push(friendInfo);
       });
       res.send(allFriends);
-    })
-    .catch((err) => {
-      res.send(err);
     });
+  // .then((friends) => {
+  //   friends.docs.map((friend) => {
+  //     const friendInfo = friend.data();
+  //     friendInfo.id = friend.id;
+  //     allFriends.push(friendInfo);
+  //   });
+  //   res.send(allFriends);
+  // })
+  // .catch((err) => {
+  //   res.send(err);
+  // });
 });
 
 //Reject friend request
