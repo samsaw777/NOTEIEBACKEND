@@ -13,7 +13,7 @@ const MongodbUrl = process.env.DATABASE_URI;
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use("/", require("./Routes/routes"));
 app.use("/", require("./Routes/users"));
 app.use("/", require("./Routes/auth"));
